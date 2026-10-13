@@ -1,0 +1,65 @@
+{% if user.is_authenticated %}
+<details class="customer-menu">
+    <summary class="account-nav-link" aria-label="Open customer settings" title="Account and settings">
+        {% if user.customer_profile.profile_image %}<img class="customer-menu-avatar" src="{{ user.customer_profile.profile_image.url }}" alt="">{% else %}
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.4-3.4 3.2-5.5 7-5.5s6.6 2.1 7 5.5"/></svg>
+        {% endif %}
+        <span class="visually-hidden">Account and settings</span>
+    </summary>
+    <button class="customer-menu-backdrop" type="button" aria-label="Close account panel" tabindex="-1"></button>
+    <aside class="customer-menu-panel" aria-label="Account and settings">
+        <div class="customer-drawer-heading">
+            <div>
+                <p class="customer-drawer-eyebrow">YOUR ACCOUNT</p>
+                <h2>Profile settings</h2>
+            </div>
+            <button class="customer-drawer-close" type="button" aria-label="Close account panel">×</button>
+        </div>
+        <div class="customer-drawer-identity">
+            {% if user.customer_profile.profile_image %}<img src="{{ user.customer_profile.profile_image.url }}" alt="">{% else %}<span class="customer-drawer-initial">{{ user.first_name|default:user.username|first|upper }}</span>{% endif %}
+            <span><strong>{{ user.get_full_name|default:user.username }}</strong><small>{{ user.username }}</small></span>
+        </div>
+        <form class="customer-drawer-form" method="post" enctype="multipart/form-data" action="{% url 'store:account_settings' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <label for="drawer-first-name">First name</label>
+            <input id="drawer-first-name" type="text" name="first_name" maxlength="150" autocomplete="given-name" value="{{ user.first_name }}" required>
+            <label for="drawer-last-name">Last name</label>
+            <input id="drawer-last-name" type="text" name="last_name" maxlength="150" autocomplete="family-name" value="{{ user.last_name }}" required>
+            <label for="drawer-email">Email address</label>
+            <input id="drawer-email" type="email" name="email" value="{{ user.email }}" autocomplete="email" required>
+            <label for="drawer-phone">Phone number</label>
+            <input id="drawer-phone" type="tel" name="phone" maxlength="30" value="{{ user.customer_profile.phone }}" autocomplete="tel" placeholder="+234 ...">
+            <label for="drawer-profile-image">Profile photo</label>
+            <input id="drawer-profile-image" type="file" name="profile_image" accept="image/jpeg,image/png,image/webp">
+            <small class="customer-drawer-help">JPG, PNG, or WebP · up to 5 MB</small>
+            {% if user.customer_profile.profile_image %}<label class="customer-drawer-clear"><input type="checkbox" name="profile_image-clear" id="drawer-profile-image-clear"> Remove current photo</label>{% endif %}
+            <button class="customer-drawer-save" type="submit">Save settings</button>
+        </form>
+        <a class="customer-drawer-account-link" href="{% url 'store:account' %}">View account and orders <span>→</span></a>
+        <form class="customer-drawer-logout" method="post" action="{% url 'store:logout' %}">{% csrf_token %}<button type="submit">Log out</button></form>
+    </aside>
+</details>
+<script>
+document.querySelectorAll(".customer-menu").forEach((menu) => {
+    const panel = menu.querySelector(".customer-menu-panel");
+    const backdrop = menu.querySelector(".customer-menu-backdrop");
+    const closeButton = panel.querySelector(".customer-drawer-close");
+    document.body.append(backdrop, panel);
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    const syncOpenState = () => {
+        document.body.classList.toggle("customer-drawer-open", menu.open);
+        if (menu.open) closeButton.focus();
+        else menu.querySelector("summary").focus();
+    };
+    const close = () => { menu.open = false; syncOpenState(); };
+    backdrop.addEventListener("click", close);
+    closeButton.addEventListener("click", close);
+    menu.addEventListener("toggle", syncOpenState);
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && menu.open) close(); });
+});
+</script>
+{% else %}
+<a class="auth-nav-button" href="{% url 'store:login' %}"><span>Log in</span><span aria-hidden="true">/</span><span>Sign up</span></a>
+{% endif %}

@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Products | Gaudium Opus Admin</title>
+    <link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_orders.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_products.css' %}">
+</head>
+<body class="dashboard-body product-admin-page">
+<div class="admin-shell">
+    <aside class="admin-sidebar">
+        <a class="admin-brand" href="{{ store_url }}"><span class="brand-mark">◆</span><span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span></a>
+        <nav class="side-nav" aria-label="Admin navigation">
+            <a class="side-link" href="{{ dashboard_url }}"><span>▦</span> Dashboard</a>
+            <a class="side-link active" href="{{ product_list_url }}"><span>◇</span> Products</a>
+            <a class="side-link" href="{{ orders_url }}"><span>▤</span> Orders</a>
+            <a class="side-link" href="{% url 'admin_reviews' %}"><span>★</span> Reviews</a>
+            <a class="side-link" href="{{ customers_url }}"><span>♙</span> Customers</a>
+            <a class="side-link" href="{{ category_list_url }}"><span>▧</span> Categories</a>
+            <a class="side-link" href="{{ dashboard_url }}#top-products"><span>▣</span> Sales Reports</a>
+            <a class="side-link" href="{{ settings_url }}"><span>⚙</span> Settings</a>
+        </nav>
+        <div class="sidebar-user"><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span><form method="post" action="{{ logout_url }}">{% csrf_token %}<button type="submit" aria-label="Log out">↪</button></form></div>
+    </aside>
+    <main class="dashboard-main">
+        <header class="topbar">
+            <form class="dashboard-search" method="get" action="{{ product_list_url }}"><span aria-hidden="true">⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search products..." aria-label="Search products"><button type="submit">Search</button></form>
+            <div class="topbar-user"><span class="notification" aria-hidden="true">♧</span><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span></div>
+        </header>
+        <div class="dashboard-content products-content">
+            <div class="page-heading"><div><h1>Products</h1><p>Manage the products shown in your storefront.</p></div><a class="product-primary-button" href="{{ product_add_url }}"><span aria-hidden="true">＋</span> Add Product</a></div>
+            {% if messages %}<div class="product-messages" role="status">{% for message in messages %}{{ message }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>{% endif %}
+            <div class="product-metrics">
+                <article class="product-metric"><span class="product-metric-icon">◇</span><div><span>Total Products</span><strong>{{ total_products }}</strong><small>In your catalogue</small></div></article>
+                <article class="product-metric"><span class="product-metric-icon">◆</span><div><span>Active on Store</span><strong>{{ active_products }}</strong><small>Visible to customers</small></div></article>
+            </div>
+            <section class="panel products-table-panel">
+                <div class="panel-heading"><div><h2>All Products</h2><small class="products-caption">{{ products|length }} product{% if products|length != 1 %}s{% endif %}{% if search %} matching “{{ search }}”{% endif %}</small></div><a class="product-add-link" href="{{ product_add_url }}">＋ Add product</a></div>
+                <div class="table-scroll"><table class="products-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Store status</th><th>Action</th></tr></thead><tbody>
+                {% for product in products %}
+                    <tr><td><div class="product-cell"><img src="{{ product.image_src }}" alt="{{ product.alt|default:product.name }}"><span><strong>{{ product.name }}</strong><small>{{ product.slug }}</small></span></div></td><td>{{ product.get_category_display }}</td><td>{{ product.price_display }}</td><td><span class="product-status {% if product.is_active %}is-active{% else %}is-hidden{% endif %}">{% if product.is_active %}Active{% else %}Hidden{% endif %}</span></td><td><a class="product-edit-link" href="{% url 'admin_product_edit' product.pk %}">Edit</a></td></tr>
+                {% empty %}<tr><td colspan="5" class="empty-state">No products found. Add a product to start building your storefront.</td></tr>{% endfor %}
+                </tbody></table></div>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

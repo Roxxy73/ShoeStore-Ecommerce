@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | Gaudium Opus Leather World</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" media="(max-width: 650px)" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}?v=mobile-bottom-nav-4">
+</head>
+<body class="catalog-body">
+    <nav class="navbar">
+        <div class="brand-wrap">
+            <a href="{% url 'store:home' %}" class="brand-bag" aria-label="Gaudium Opus home">👜</a>
+            <div class="logo"><h1>GAUDIUM OPUS</h1><h2>LEATHER WORK</h2></div>
+        </div>
+        {% include "store/includes/mobile_nav_toggle.html" %}
+        <div class="nav-middle" id="store-mobile-nav">
+            <ul class="nav-links">
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:shop' %}">Shop</a></li>
+                <li><a href="{% url 'store:home' %}#about">About</a></li>
+                <li><a href="{% url 'store:home' %}#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="nav-tools">{% include "store/includes/customer_menu.html" %}</div>
+    </nav>
+    {% include "store/includes/mobile_bottom_nav.html" %}
+    <main class="order-confirmation">
+        <div class="confirmation-mark" aria-hidden="true">✓</div>
+        <p class="shop-eyebrow"><span></span> ORDER RECEIVED <span></span></p>
+        <h1>Thank you, {{ order.full_name }}.</h1>
+        <p class="confirmation-copy">Your order has been placed. We’ll contact you to confirm delivery details. Payment is due on delivery.</p>
+        <div class="confirmation-reference">
+            <span>Order reference</span>
+            <strong>{{ order.reference }}</strong>
+        </div>
+        <div class="confirmation-summary">
+            <h2>Order Summary</h2>
+            {% for item in order.items.all %}
+            <div class="summary-line">
+                <span>{{ item.quantity }} × {{ item.product_name }}{% if item.size %} (Size {{ item.size }}){% endif %}</span>
+                <strong>₦{{ item.line_total_display }}</strong>
+            </div>
+            {% endfor %}
+            <div class="summary-line"><span>Shipping</span><strong>{% if order.shipping %}₦{{ order.shipping_display }}{% else %}Free{% endif %}</strong></div>
+            <div class="summary-line summary-total"><span>Total due on delivery</span><strong>₦{{ order.total_display }}</strong></div>
+        </div>
+        <a href="{% url 'store:shop' %}" class="purchase-add-button">Continue Shopping</a>
+    </main>
+</body>
+</html>

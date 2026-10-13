@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | Gaudium Opus Leather World</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" media="(max-width: 650px)" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}?v=mobile-bottom-nav-4">
+    <link rel="stylesheet" href="{% static 'store/reviews.css' %}">
+</head>
+<body class="catalog-body">
+    <div class="background-slideshow" aria-hidden="true">
+        <div class="background-slide background-slide-one is-active"></div>
+        <div class="background-slide background-slide-two"></div>
+        <div class="background-slide background-slide-three"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="brand-wrap">
+            <a href="{% url 'store:home' %}" class="brand-bag" aria-label="Gaudium Opus home">
+                <svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true" focusable="false">
+                    <defs>
+                        <linearGradient id="catalogLeather" x1="12" y1="18" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#bd8050"/><stop offset="1" stop-color="#61391f"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M22 23v-7a10 10 0 0 1 20 0v7" fill="none" stroke="#e5bd78" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M14 22h36l4 32H10l4-32Z" fill="url(#catalogLeather)" stroke="#e5bd78" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M14 30c6 2 12 3 18 3s12-1 18-3l1 12c-6 2-12 3-19 3s-13-1-19-3l1-12Z" fill="#7b482b" fill-opacity=".68"/>
+                    <circle cx="32" cy="40" r="3" fill="#ffe6a7" stroke="#8b5b29"/>
+                </svg>
+            </a>
+            <div class="logo"><h1>GAUDIUM OPUS</h1><h2>LEATHER WORK</h2></div>
+        </div>
+        {% include "store/includes/mobile_nav_toggle.html" %}
+        <div class="nav-middle" id="store-mobile-nav">
+            <ul class="nav-links">
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:shop' %}">Shop</a></li>
+                <li><a href="{% url 'store:home' %}#about">About</a></li>
+                <li><a href="{% url 'store:home' %}#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="nav-tools">
+            <label class="search-box">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input type="search" placeholder="Search" aria-label="Search products">
+            </label>
+            <a class="icon-btn cart-nav-link" href="{% url 'store:cart' %}" aria-label="Cart">
+                🛒{% if cart_count %}<span class="cart-count">{{ cart_count }}</span>{% endif %}
+            </a>
+            {% include "store/includes/customer_menu.html" %}
+        </div>
+    </nav>
+    {% include "store/includes/mobile_bottom_nav.html" %}
+
+    <main class="product-detail-page">
+        <nav class="breadcrumbs product-breadcrumbs" aria-label="Breadcrumb">
+            <a href="{% url 'store:home' %}">Home</a>
+            <span aria-hidden="true">›</span>
+            <a href="{% url 'store:shop' %}">Shop</a>
+            <span aria-hidden="true">›</span>
+            <span aria-current="page">{{ product.name }}</span>
+        </nav>
+
+        <section class="product-detail-layout">
+            <div class="product-gallery">
+                <div class="product-thumbnails" aria-label="Product images">
+                    <button class="product-thumbnail is-selected" type="button" aria-label="Show product image">
+                        {% if product.image_src %}
+                        <img src="{{ product.image_src }}" alt="">
+                        {% else %}
+                        <span class="{{ product.image_class }}" aria-hidden="true"></span>
+                        {% endif %}
+                    </button>
+                    <button class="product-thumbnail" type="button" aria-label="Show product image">
+                        {% if product.image_src %}
+                        <img src="{{ product.image_src }}" alt="">
+                        {% else %}
+                        <span class="{{ product.image_class }}" aria-hidden="true"></span>
+                        {% endif %}
+                    </button>
+                    <button class="product-thumbnail" type="button" aria-label="Show product image">
+                        {% if product.image_src %}
+                        <img src="{{ product.image_src }}" alt="">
+                        {% else %}
+                        <span class="{{ product.image_class }}" aria-hidden="true"></span>
+                        {% endif %}
+                    </button>
+                    <button class="product-thumbnail" type="button" aria-label="Show product image">
+                        {% if product.image_src %}
+                        <img src="{{ product.image_src }}" alt="">
+                        {% else %}
+                        <span class="{{ product.image_class }}" aria-hidden="true"></span>
+                        {% endif %}
+                    </button>
+                </div>
+
+                <div class="product-main-image">
+                    {% if product.image_src %}
+                    <img src="{{ product.image_src }}" alt="{{ product.alt }}" id="main-product-image">
+                    {% else %}
+                    <div class="{{ product.image_class }}" role="img" aria-label="{{ product.alt }}"></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="product-detail-info">
+                <h1>{{ product.name }}</h1>
+                <p class="product-detail-price">₦{{ product.price_display }}</p>
+                <div class="product-rating detail-rating" aria-label="{% if review_count %}Rated {{ average_rating|floatformat:1 }} out of 5 from customer reviews{% else %}No customer reviews yet{% endif %}">
+                    {% if review_count %}<span aria-hidden="true">★★★★★</span><small>{{ average_rating|floatformat:1 }} / 5 · {{ review_count }} customer review{% if review_count != 1 %}s{% endif %}</small>{% else %}<small>No customer reviews yet</small>{% endif %}
+                </div>
+                <p class="product-description">{{ product.description }}</p>
+
+                {% if error %}
+                <p class="form-error" role="alert">{{ error }}</p>
+                {% endif %}
+
+                <form method="post" action="{% url 'store:add_to_cart' product.slug %}" class="product-purchase-form">
+                    {% csrf_token %}
+                    {% if product.sizes %}
+                    <fieldset class="size-picker">
+                        <legend>Size</legend>
+                        <div class="size-options">
+                            {% for size in product.sizes %}
+                            <label class="size-option">
+                                <input type="radio" name="size" value="{{ size }}" {% if forloop.first %}checked{% endif %}>
+                                <span>{{ size }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+                    {% endif %}
+
+                    <label class="quantity-label" for="product-quantity">Quantity</label>
+                    <div class="quantity-control">
+                        <button type="button" data-quantity-step="-1" aria-label="Decrease quantity">−</button>
+                        <input id="product-quantity" type="number" name="quantity" min="1" max="99" value="1" required>
+                        <button type="button" data-quantity-step="1" aria-label="Increase quantity">+</button>
+                    </div>
+
+                    <div class="purchase-actions">
+                        <button class="purchase-add-button" type="submit">Add to Cart</button>
+                        <button class="purchase-buy-button" type="submit" name="next" value="checkout">Buy Now</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="customer-reviews" id="customer-reviews" aria-labelledby="customer-reviews-title">
+            <div class="customer-reviews-heading">
+                <div><span class="review-eyebrow">CUSTOMER FEEDBACK</span><h2 id="customer-reviews-title">Customer Reviews</h2><p>Reviews are for customers with a delivered order for this product.</p></div>
+                {% if review_count %}<div class="review-summary"><strong>{{ average_rating|floatformat:1 }}</strong><span aria-hidden="true">★★★★★</span><small>{{ review_count }} review{% if review_count != 1 %}s{% endif %}</small></div>{% endif %}
+            </div>
+            {% if messages %}<div class="review-flash" role="status">{% for message in messages %}{{ message }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>{% endif %}
+            <div class="customer-reviews-layout">
+                <div class="customer-review-list">
+                    {% for review in customer_reviews %}
+                    <article class="customer-review-card">
+                        <div class="customer-review-meta"><div><strong>{{ review.customer_name }}</strong><small>{{ review.created_at|date:"M d, Y" }}</small></div><span class="customer-review-stars" aria-label="{{ review.rating }} out of 5 stars">{% for star in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}<span class="empty-star">★</span>{% endif %}{% endfor %}</span></div>
+                        <p>{{ review.comment|linebreaksbr }}</p>
+                    </article>
+                    {% empty %}<div class="customer-review-empty"><span aria-hidden="true">✦</span><strong>No customer reviews yet</strong><p>Be the first to share your thoughts about this product.</p></div>{% endfor %}
+                </div>
+                <form class="customer-review-form" method="post" action="{% url 'store:product_detail' product.slug %}#customer-reviews">
+                    {% csrf_token %}<h3>Write a review</h3><p>Use the email from your delivered order. Your review will appear after approval.</p>
+                    {% for field in review_form %}<div class="review-form-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="review-field-error">{{ error }}</small>{% endfor %}</div>{% endfor %}
+                    <button type="submit" class="review-submit-button">Submit Review</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="product-benefits" aria-label="Shopping benefits">
+            <div class="product-benefit">
+                <span aria-hidden="true">♧</span>
+                <div><h2>Free Shipping</h2><p>On orders over ₦100,000</p></div>
+            </div>
+            <div class="product-benefit">
+                <span aria-hidden="true">◇</span>
+                <div><h2>Secure Payment</h2><p>100% secure payment</p></div>
+            </div>
+            <div class="product-benefit">
+                <span aria-hidden="true">◷</span>
+                <div><h2>Easy Returns</h2><p>7 days return policy</p></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{% static 'store/script.js' %}" defer></script>
+</body>
+</html>

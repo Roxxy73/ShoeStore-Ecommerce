@@ -1,0 +1,48 @@
+{% load static humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer Accounts | Gaudium Opus Admin</title>
+    <link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_orders.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_customers.css' %}">
+</head>
+<body class="dashboard-body">
+<div class="admin-shell">
+    <aside class="admin-sidebar">
+        <a class="admin-brand" href="{{ store_url }}"><span class="brand-mark">◆</span><span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span></a>
+        <nav class="side-nav" aria-label="Admin navigation">
+            <a class="side-link" href="{{ dashboard_url }}"><span>▦</span> Dashboard</a>
+            <a class="side-link" href="{{ product_list_url }}"><span>◇</span> Products</a>
+            <a class="side-link" href="{{ orders_url }}"><span>▤</span> Orders</a>
+            <a class="side-link" href="{% url 'admin_reviews' %}"><span>★</span> Reviews</a>
+            <a class="side-link active" href="{{ customers_url }}"><span>♙</span> Customers</a>
+            <a class="side-link" href="{{ category_list_url }}"><span>▧</span> Categories</a>
+            <a class="side-link" href="{{ dashboard_url }}#top-products"><span>▣</span> Sales Reports</a>
+            <a class="side-link" href="{{ settings_url }}"><span>⚙</span> Settings</a>
+        </nav>
+        <div class="sidebar-user"><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span><form method="post" action="{{ logout_url }}">{% csrf_token %}<button type="submit" aria-label="Log out">↪</button></form></div>
+    </aside>
+    <main class="dashboard-main">
+        <header class="topbar">
+            <form class="dashboard-search" method="get" action="{{ customers_url }}"><span aria-hidden="true">⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search name, username, or email..." aria-label="Search customer accounts"><button type="submit">Search</button></form>
+            <div class="topbar-user"><span class="notification" aria-hidden="true">♧</span><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span></div>
+        </header>
+        <div class="dashboard-content orders-content">
+            <div class="page-heading"><div><h1>Customer Accounts</h1><p>Registered customers and their recent sign-in and order activity.</p></div></div>
+            <section class="panel orders-table-panel">
+                <div class="panel-heading"><div><h2>Registered Customers</h2><small class="customer-count-caption">{{ customers|length }} shown · {{ total_accounts }} total accounts</small></div></div>
+                <div class="table-scroll"><table class="orders-table customer-accounts-table"><thead><tr><th>Customer</th><th>Username</th><th>Email</th><th>Phone</th><th>Joined</th><th>Last Sign In</th><th>Orders</th><th>Total Spent</th></tr></thead><tbody>
+                {% for customer in customers %}
+                    <tr><td><div class="customer-cell">{% if customer.customer_profile.profile_image %}<img class="avatar" src="{{ customer.customer_profile.profile_image.url }}" alt="">{% else %}<span class="avatar">{{ customer.first_name|default:customer.username|first|upper }}</span>{% endif %}<span><strong>{{ customer.get_full_name|default:customer.username }}</strong><small>{% if customer.is_active %}Active account{% else %}Account inactive{% endif %}</small></span></div></td><td>{{ customer.username }}</td><td>{{ customer.email|default:"—" }}</td><td>{{ customer.customer_profile.phone|default:"—" }}</td><td>{{ customer.date_joined|date:"M d, Y" }}</td><td>{% if customer.last_login %}{{ customer.last_login|date:"M d, Y · g:i A" }}{% else %}Never{% endif %}</td><td>{{ customer.order_count }}</td><td>₦{{ customer.lifetime_value|default:0|intcomma }}</td></tr>
+                {% empty %}<tr><td colspan="8" class="empty-state">No registered customer accounts{% if search %} match “{{ search }}”{% endif %}.</td></tr>{% endfor %}
+                </tbody></table></div>
+                <p class="customer-privacy-note">Passwords and login credentials are never displayed here.</p>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

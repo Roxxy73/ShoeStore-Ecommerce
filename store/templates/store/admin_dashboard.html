@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard | Gaudium Opus Admin</title>
+    <link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <a class="admin-brand" href="{% url 'store:home' %}">
+                <span class="brand-mark" aria-hidden="true">◆</span>
+                <span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span>
+            </a>
+            <nav class="side-nav" aria-label="Admin navigation">
+                <a class="side-link active" href="{% url 'admin_dashboard' %}"><span>▦</span> Dashboard</a>
+                <a class="side-link" href="{{ product_list_url }}"><span>◇</span> Products</a>
+                <a class="side-link" href="{% url 'admin_orders' %}"><span>▤</span> Orders</a>
+                <a class="side-link" href="{% url 'admin_reviews' %}"><span>★</span> Reviews</a>
+                <a class="side-link" href="{% url 'admin_customers' %}"><span>♙</span> Customers</a>
+                <a class="side-link" href="{{ category_list_url }}"><span>▧</span> Categories</a>
+                <a class="side-link" href="#top-products"><span>▣</span> Sales Reports</a>
+                <a class="side-link" href="{{ password_change_url }}"><span>⚙</span> Settings</a>
+            </nav>
+            <a class="sidebar-promo" href="{{ store_url }}">
+                <span class="promo-image" aria-hidden="true"></span>
+                <strong>Crafted with Passion, Made for You</strong>
+                <small>Premium leather goods for every step of your journey.</small>
+                <span class="promo-button">View Store ↗</span>
+            </a>
+            <div class="sidebar-user">
+                <span class="avatar">{{ request.user.get_username|first|upper }}</span>
+                <span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span>
+                <form method="post" action="{{ logout_url }}">
+                    {% csrf_token %}
+                    <button type="submit" aria-label="Log out" title="Log out">↪</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="topbar">
+                <form class="dashboard-search" method="get" action="{% url 'admin_dashboard' %}">
+                    <span aria-hidden="true">⌕</span>
+                    <input type="search" name="q" value="{{ search }}" placeholder="Search orders and customers..." aria-label="Search orders and customers">
+                    <button type="submit">Search</button>
+                </form>
+                <div class="topbar-user">
+                    <span class="notification" aria-hidden="true">♧</span>
+                    <span class="avatar">{{ request.user.get_username|first|upper }}</span>
+                    <span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Super Admin</small></span>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-heading">
+                    <div><h1>Dashboard</h1><p>Welcome back, {{ request.user.get_short_name|default:request.user.get_username }}! Here's what's happening with your store today.</p></div>
+                    <a class="date-range" href="#sales-overview"><span>▦</span> Last 7 days <span>⌄</span></a>
+                </div>
+
+                <div class="dashboard-grid">
+                    <section class="main-column">
+                        <div class="metrics-grid">
+                            <article class="metric-card"><div class="metric-icon">₦</div><div><span>Total Sales</span><strong>₦{{ revenue_display }}</strong><small class="metric-note">Lifetime order value</small></div><span class="sparkline">⌁</span></article>
+                            <article class="metric-card"><div class="metric-icon">◇</div><div><span>Total Orders</span><strong>{{ total_orders }}</strong><small class="metric-note">All order statuses</small></div><span class="sparkline">⌁</span></article>
+                            <article class="metric-card"><div class="metric-icon">♙</div><div><span>Total Customers</span><strong>{{ customer_count }}</strong><small class="metric-note">Unique customer emails</small></div><span class="sparkline">⌁</span></article>
+                            <article class="metric-card"><div class="metric-icon">▣</div><div><span>Total Products</span><strong>{{ product_count }}</strong><small class="metric-note">In the storefront catalog</small></div><span class="sparkline">⌁</span></article>
+                        </div>
+
+                        <div class="middle-grid">
+                            <section class="panel sales-panel" id="sales-overview">
+                                <div class="panel-heading"><h2>Sales Overview</h2><span class="panel-period">Last 7 days</span></div>
+                                <div class="chart">
+                                    <div class="chart-y-labels"><span>₦{{ chart_max_display }}</span><span>₦{{ chart_mid_display }}</span><span>₦0</span></div>
+                                    <svg viewBox="0 0 600 190" role="img" aria-label="Order sales for the last seven days">
+                                        <defs><linearGradient id="sales-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#d99543" stop-opacity=".38"/><stop offset="100%" stop-color="#d99543" stop-opacity="0"/></linearGradient></defs>
+                                        <path class="chart-gridline" d="M12 12H588 M12 95H588 M12 178H588"/>
+                                        <polygon class="chart-area" points="{{ chart_area }}"/>
+                                        <polyline class="chart-line" points="{{ chart_polyline }}"/>
+                                    </svg>
+                                </div>
+                                <div class="chart-dates">{% for point in chart_values %}<span>{{ point.date|date:"M j" }}</span>{% endfor %}</div>
+                            </section>
+                            <section class="panel status-panel">
+                                <div class="panel-heading"><h2>Order Status</h2><a href="{% url 'admin_orders' %}">View orders →</a></div>
+                                <div class="status-content">
+                                    <div class="donut" style="background: {{ donut_background }};"><div><strong>{{ total_orders }}</strong><span>Total Orders</span></div></div>
+                                    <ul class="status-legend">
+                                        {% for status in order_statuses %}
+                                        <li><span class="legend-dot" style="background: {{ status.color }};"></span><span>{{ status.label }}</span><strong>{{ status.count }}</strong></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="lower-grid">
+                            <section class="panel table-panel" id="top-products">
+                                <div class="panel-heading"><h2>Top Selling Products</h2><a href="{{ store_shop_url }}">View store →</a></div>
+                                <div class="table-scroll"><table>
+                                    <thead><tr><th>Product</th><th>Sold</th><th>Revenue</th></tr></thead>
+                                    <tbody>
+                                        {% for product in top_products %}
+                                <tr><td><span class="product-cell">{% if product.image %}<img src="{{ product.image }}" alt="">{% else %}<span class="product-placeholder">◆</span>{% endif %}<span>{{ product.product_name }}</span></span></td><td>{{ product.sold }}</td><td>₦{{ product.revenue_display }}</td></tr>
+                                        {% empty %}
+                                        <tr><td colspan="3" class="empty-state">Product sales will appear here after orders are placed.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table></div>
+                            </section>
+                            <section class="panel table-panel customers-panel" id="latest-customers">
+                                <div class="panel-heading"><h2>Latest Customers</h2><a href="{% url 'admin_customers' %}">View customers →</a></div>
+                                <div class="table-scroll"><table>
+                                    <thead><tr><th>Name / Email</th><th>Orders</th></tr></thead>
+                                    <tbody>
+                                        {% for customer in latest_customers %}
+                                        <tr><td><span class="customer-cell"><span class="avatar small">{{ customer.full_name|first|upper }}</span><span><strong>{{ customer.full_name }}</strong><small>{{ customer.email }}</small></span></span></td><td>{{ customer.order_count }}</td></tr>
+                                        {% empty %}
+                                        <tr><td colspan="2" class="empty-state">Customer details will appear here after checkout.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table></div>
+                            </section>
+                        </div>
+                        <section class="brand-banner">
+                            <span>GAUDIUM OPUS</span>
+                            <h2>Quality Leather Goods for Every Step of Your Journey</h2>
+                            <p>Premium leather shoes, bags, belts and more. Style, comfort and durability — all in one place.</p>
+                            <a href="{{ product_list_url }}">Manage Products →</a>
+                        </section>
+                    </section>
+
+                    <aside class="right-column">
+                        <section class="panel recent-panel">
+                            <div class="panel-heading"><h2>Recent Orders</h2><a href="{% url 'admin_orders' %}">View All →</a></div>
+                            <div class="recent-list">
+                                {% for order in recent_orders %}
+                                <a class="recent-order" href="{% url 'admin_order_detail' order.pk %}">
+                                    {% if order.primary_item and order.primary_item.product_slug == "mens-leather-dress-shoes" or order.primary_item and order.primary_item.product_slug == "classic-loafers" %}
+                                    <img src="{% static 'store/images/shoe.png' %}" alt="">
+                                    {% elif order.primary_item and order.primary_item.product_slug == "leather-briefcase-bag" %}
+                                    <img src="{% static 'store/images/background.png' %}" alt="">
+                                    {% elif order.primary_item and order.primary_item.product_slug == "outdoor-sandals" %}
+                                    <img src="{% static 'store/images/images5.jpeg' %}" alt="">
+                                    {% else %}<span class="product-placeholder">◆</span>{% endif %}
+                                    <span class="recent-order-info"><strong>#ORD-{{ order.reference|stringformat:"s"|slice:":8" }}</strong><small>{{ order.primary_item.product_name|default:"Store order" }}</small><b>₦{{ order.total }}</b></span>
+                                    <span class="recent-order-meta"><span class="status-badge {{ order.status }}">{{ order.get_status_display }}</span><small>{{ order.created_at|timesince }} ago</small></span>
+                                </a>
+                                {% empty %}
+                                <p class="empty-state">New orders will appear here.</p>
+                                {% endfor %}
+                            </div>
+                        </section>
+                        <section class="panel quick-panel">
+                            <div class="panel-heading"><h2>Quick Actions</h2></div>
+                            <div class="quick-actions">
+                                <a href="{% url 'admin:store_order_changelist' %}"><span>＋</span> Order Records</a>
+                                <a href="{% url 'admin_orders' %}"><span>▤</span> Manage Orders</a>
+                                <a href="{{ product_list_url }}"><span>◇</span> View Products</a>
+                                <a href="{{ product_add_url }}"><span>＋</span> Add Product</a>
+                                <a href="#sales-overview"><span>▥</span> View Reports</a>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

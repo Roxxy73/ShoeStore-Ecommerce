@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Orders | Gaudium Opus Admin</title>
+    <link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_orders.css' %}">
+</head>
+<body class="dashboard-body">
+<div class="admin-shell">
+    <aside class="admin-sidebar">
+        <a class="admin-brand" href="{{ store_url }}"><span class="brand-mark">◆</span><span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span></a>
+        <nav class="side-nav" aria-label="Admin navigation">
+            <a class="side-link" href="{{ dashboard_url }}"><span>▦</span> Dashboard</a>
+            <a class="side-link" href="{{ product_list_url }}"><span>◇</span> Products</a>
+            <a class="side-link active" href="{{ order_list_url }}"><span>▤</span> Orders</a>
+            <a class="side-link" href="{% url 'admin_reviews' %}"><span>★</span> Reviews</a>
+            <a class="side-link" href="{% url 'admin_customers' %}"><span>♙</span> Customers</a>
+            <a class="side-link" href="{{ category_list_url }}"><span>▧</span> Categories</a>
+            <a class="side-link" href="{{ dashboard_url }}#top-products"><span>▣</span> Sales Reports</a>
+            <a class="side-link" href="{{ password_change_url }}"><span>⚙</span> Settings</a>
+        </nav>
+        <div class="sidebar-user"><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Super Admin</small></span><form method="post" action="{{ logout_url }}">{% csrf_token %}<button type="submit" aria-label="Log out">↪</button></form></div>
+    </aside>
+    <main class="dashboard-main">
+        <header class="topbar">
+            <form class="dashboard-search" method="get" action="{{ order_list_url }}"><span aria-hidden="true">⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search orders, customers, or products..." aria-label="Search orders, customers, or products"><button type="submit">Search</button></form>
+            <div class="topbar-user"><span class="notification" aria-hidden="true">♧</span><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Super Admin</small></span></div>
+        </header>
+        <div class="dashboard-content orders-content">
+            <div class="page-heading"><div><h1>Orders</h1><p>Manage and track all customer orders.</p></div><span class="date-range"><span>▦</span> All orders <span>⌄</span></span></div>
+            <div class="order-metrics">
+                {% for label, count, style in order_counts %}<article class="order-metric {{ style }}"><span class="order-metric-icon">{% if style == 'total' %}⬡{% elif style == 'cancelled' %}●{% else %}▣{% endif %}</span><div><span>{{ label }}</span><strong>{{ count }}</strong><small>{% if style == 'total' %}All time{% else %}Current orders{% endif %}</small></div></article>{% endfor %}
+            </div>
+            <div class="orders-layout">
+                <section class="panel orders-table-panel">
+                    <div class="panel-heading"><h2>Recent Orders</h2><span class="orders-count">{{ orders|length }} orders</span></div>
+                    <div class="table-scroll"><table class="orders-table"><thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>
+                    {% for order in orders %}
+                        <tr class="{% if selected_order == order %}selected{% endif %}"><td><a href="{% url 'admin_order_detail' order.pk %}">#ORD-{{ order.reference|stringformat:"s"|slice:":8" }}</a></td><td>{{ order.full_name }}</td><td>{{ order.items.count }} item{% if order.items.count != 1 %}s{% endif %}</td><td>₦{{ order.total }}</td><td><span class="status-badge {{ order.status }}">{{ order.get_status_display }}</span></td><td>{{ order.created_at|date:"M d, Y" }}</td><td><a class="view-order" href="{% url 'admin_order_detail' order.pk %}">View</a></td></tr>
+                    {% empty %}<tr><td colspan="7" class="empty-state">No orders found.</td></tr>{% endfor %}
+                    </tbody></table></div>
+                </section>
+                <aside class="panel order-preview" id="order-details">
+                    <div class="panel-heading"><h2>Order Details Preview</h2></div>
+                    {% if selected_order %}
+                    <div class="preview-product">
+                        {% with item=selected_order.primary_item %}
+                        {% if item.product_slug == "mens-leather-dress-shoes" or item.product_slug == "classic-loafers" %}<img src="{% static 'store/images/shoe.png' %}" alt="{{ item.product_name }}">
+                        {% elif item.product_slug == "leather-briefcase-bag" %}<img src="{% static 'store/images/background.png' %}" alt="{{ item.product_name }}">
+                        {% elif item.product_slug == "outdoor-sandals" %}<img src="{% static 'store/images/images5.jpeg' %}" alt="{{ item.product_name }}">
+                        {% else %}<span class="product-placeholder">◆</span>{% endif %}
+                        <div><strong>#ORD-{{ selected_order.reference|stringformat:"s"|slice:":8" }}</strong><span class="status-badge {{ selected_order.status }}">{{ selected_order.get_status_display }}</span><small>{{ item.product_name|default:"Store order" }}</small><b>₦{{ selected_order.total }}</b><small>{{ selected_order.created_at|date:"M d, Y" }} · {{ selected_order.items.count }} item{% if selected_order.items.count != 1 %}s{% endif %}</small></div>
+                        {% endwith %}
+                    </div>
+                    <div class="preview-section"><h3>Customer</h3><div class="preview-customer"><span class="avatar">{{ selected_order.full_name|first|upper }}</span><div><strong>{{ selected_order.full_name }}</strong><small>{{ selected_order.email }}</small><small>{{ selected_order.phone }}</small></div></div></div>
+                    <div class="preview-section"><h3>Shipping Address</h3><p>⌖ &nbsp;{{ selected_order.address }}<br><span>{{ selected_order.city }}, {{ selected_order.state }}</span></p></div>
+                    <a class="full-details" href="{{ selected_order.admin_change_url }}">View Full Details →</a>
+                    {% else %}<p class="empty-state">Order details will appear here when an order is selected.</p>{% endif %}
+                </aside>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings | Gaudium Opus Admin</title>
+    <link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_settings.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <a class="admin-brand" href="{% url 'store:home' %}">
+                <span class="brand-mark" aria-hidden="true">◆</span>
+                <span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span>
+            </a>
+            <nav class="side-nav" aria-label="Admin navigation">
+                <a class="side-link" href="{% url 'admin_dashboard' %}"><span>▦</span> Dashboard</a>
+                <a class="side-link" href="{{ product_list_url }}"><span>◇</span> Products</a>
+                <a class="side-link" href="{% url 'admin_orders' %}"><span>▤</span> Orders</a>
+                <a class="side-link" href="{% url 'admin_reviews' %}"><span>★</span> Reviews</a>
+                <a class="side-link" href="{% url 'admin_customers' %}"><span>♙</span> Customers</a>
+                <a class="side-link" href="{{ category_list_url }}"><span>▧</span> Categories</a>
+                <a class="side-link" href="{% url 'admin_dashboard' %}#top-products"><span>▣</span> Sales Reports</a>
+                <a class="side-link active" href="{% url 'admin_settings' %}"><span>⚙</span> Settings</a>
+            </nav>
+            <div class="sidebar-user">
+                <span class="avatar">{{ request.user.get_username|first|upper }}</span>
+                <span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span>
+                <form method="post" action="{{ logout_url }}">
+                    {% csrf_token %}
+                    <button type="submit" aria-label="Log out" title="Log out">↪</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="topbar">
+                <div class="topbar-search">
+                    <span aria-hidden="true">⌕</span>
+                    <input type="search" placeholder="Search settings..." aria-label="Search settings" id="settings-search">
+                </div>
+                <div class="topbar-user">
+                    <span class="notification" aria-hidden="true">♧</span>
+                    <span class="avatar">{{ request.user.get_username|first|upper }}</span>
+                    <span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Super Admin</small></span>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-heading">
+                    <div><h1>Settings</h1><p>Manage your store settings, preferences and account information.</p></div>
+                </div>
+
+                {% if messages %}<div class="settings-messages" role="status">{% for message in messages %}{{ message }}{% endfor %}</div>{% endif %}
+
+                <div class="settings-layout">
+                    <div class="settings-sidebar">
+                        <div class="settings-menu">
+                            <a class="settings-item active" href="#general">
+                                <span class="settings-icon" aria-hidden="true">⚙</span>
+                                <span>General</span>
+                            </a>
+                            <a class="settings-item" href="#store-info">
+                                <span class="settings-icon" aria-hidden="true">♧</span>
+                                <span>Store Information</span>
+                            </a>
+                            <a class="settings-item" href="#payment">
+                                <span class="settings-icon" aria-hidden="true">▣</span>
+                                <span>Payment Settings</span>
+                            </a>
+                            <a class="settings-item" href="#shipping">
+                                <span class="settings-icon" aria-hidden="true">♧</span>
+                                <span>Shipping Settings</span>
+                            </a>
+                            <a class="settings-item" href="#notifications">
+                                <span class="settings-icon" aria-hidden="true">♧</span>
+                                <span>Notifications</span>
+                            </a>
+                            <a class="settings-item" href="#users">
+                                <span class="settings-icon" aria-hidden="true">♙</span>
+                                <span>Users & Roles</span>
+                            </a>
+                            <a class="settings-item" href="#security">
+                                <span class="settings-icon" aria-hidden="true">♢</span>
+                                <span>Security</span>
+                            </a>
+                            <a class="settings-item" href="#billing">
+                                <span class="settings-icon" aria-hidden="true">▤</span>
+                                <span>Billing & Subscription</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="settings-content">
+                        <section class="settings-panel" id="general">
+                            <div class="settings-header">
+                                <h2>General Settings</h2>
+                                <p>Update your store details and basic configuration.</p>
+                            </div>
+
+                            <form class="settings-form" method="post" action="{% url 'admin_settings' %}">
+                                {% csrf_token %}
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="store-name">Store Name</label>
+                                        <input type="text" id="store-name" name="store_name" value="{{ store_name }}" placeholder="Store name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="store-email">Store Email</label>
+                                        <input type="email" id="store-email" name="store_email" value="{{ store_email }}" placeholder="Store email" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number</label>
+                                        <input type="tel" id="phone" name="phone" value="{{ phone }}" placeholder="Phone number" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="timezone">Time Zone</label>
+                                        <select id="timezone" name="timezone">
+                                            <option {% if timezone == '(GMT+1) West Africa Time' %}selected{% endif %}>(GMT+1) West Africa Time</option>
+                                            <option {% if timezone == '(GMT+0) Greenwich Mean Time' %}selected{% endif %}>(GMT+0) Greenwich Mean Time</option>
+                                            <option {% if timezone == '(GMT+2) Central Africa Time' %}selected{% endif %}>(GMT+2) Central Africa Time</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="language">Language</label>
+                                    <select id="language" name="language">
+                                        <option {% if language == 'English' %}selected{% endif %}>English</option>
+                                        <option {% if language == 'Français' %}selected{% endif %}>Français</option>
+                                        <option {% if language == 'Español' %}selected{% endif %}>Español</option>
+                                        <option {% if language == 'Português' %}selected{% endif %}>Português</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <section class="settings-panel store-info-settings" id="store-info" hidden>
+                            <form class="store-profile-form" method="post" action="{% url 'admin_settings' %}">
+                                {% csrf_token %}<input type="hidden" name="settings_section" value="store-info">
+                                <div class="store-info-card">
+                                    <div class="settings-header"><h2>Store Information</h2><p>Manage your store's public information.</p></div>
+                                    <div class="store-image-row"><img src="{% static 'store/images/background.png' %}" alt="Storefront preview"><label class="upload-button">Change Image<input type="file" accept="image/*" aria-label="Change store image"></label></div>
+                                    <div class="form-group"><label for="store-name-info">Store Name</label><input id="store-name-info" name="store_name" value="{{ store_name }}" required></div>
+                                    <div class="form-group"><label for="store-address">Address</label><input id="store-address" name="store_address" value="{{ store_address }}"></div>
+                                    <div class="form-group"><label for="store-description">Description</label><textarea id="store-description" name="store_description" maxlength="300">{{ store_description }}</textarea><small class="description-count">{{ store_description|length }}/300</small></div>
+                                </div>
+                                <div class="store-settings-stack">
+                                    <section class="settings-subcard brand-card">
+                                        <div class="settings-header"><h2>Brand &amp; Appearance</h2></div>
+                                        <label class="field-caption">Logo</label>
+                                        <div class="logo-row"><span class="logo-mark">◆</span><label class="upload-button">Change Logo<input type="file" accept="image/*" aria-label="Change logo"></label></div>
+                                        <div class="color-fields">
+                                            <label class="form-group"><span>Primary Color</span><span class="color-control"><input type="color" name="primary_color" value="{{ primary_color }}" aria-label="Primary color"><input class="color-code" value="{{ primary_color }}" readonly></span></label>
+                                            <label class="form-group"><span>Accent Color</span><span class="color-control"><input type="color" name="accent_color" value="{{ accent_color }}" aria-label="Accent color"><input class="color-code" value="{{ accent_color }}" readonly></span></label>
+                                        </div>
+                                    </section>
+                                    <section class="settings-subcard notifications-card">
+                                        <div class="settings-header"><h2>Notification Preferences</h2></div>
+                                        <label class="notification-setting"><span><i>♧</i>Order Notifications</span><input type="checkbox" name="order_notifications" {% if order_notifications %}checked{% endif %}></label>
+                                        <label class="notification-setting"><span><i>♧</i>Low Stock Alerts</span><input type="checkbox" name="stock_alerts" {% if stock_alerts %}checked{% endif %}></label>
+                                        <label class="notification-setting"><span><i>♢</i>Marketing Emails</span><input type="checkbox" name="marketing_emails" {% if marketing_emails %}checked{% endif %}></label>
+                                    </section>
+                                    <div class="form-actions"><button type="submit" class="btn-primary">Save Changes</button></div>
+                                </div>
+                            </form>
+                        </section>
+
+                <section class="settings-panel" id="payment" hidden>
+                            <div class="settings-header">
+                                <h2>Payment Settings</h2>
+                                <p>Configure payment methods and gateways.</p>
+                            </div>
+                        </section>
+
+                <section class="settings-panel" id="shipping" hidden>
+                            <div class="settings-header">
+                                <h2>Shipping Settings</h2>
+                                <p>Set up shipping rates and delivery options.</p>
+                            </div>
+                        </section>
+
+                <section class="settings-panel" id="notifications" hidden>
+                            <div class="settings-header">
+                                <h2>Notifications</h2>
+                                <p>Configure email and push notifications.</p>
+                            </div>
+                        </section>
+
+                <section class="settings-panel" id="users" hidden>
+                            <div class="settings-header">
+                                <h2>Users & Roles</h2>
+                                <p>Manage team members and their permissions.</p>
+                            </div>
+                        </section>
+
+                <section class="settings-panel" id="security" hidden>
+                            <div class="settings-header">
+                                <h2>Security</h2>
+                                <p>Manage security settings and authentication.</p>
+                            </div>
+                        </section>
+
+                <section class="settings-panel" id="billing" hidden>
+                            <div class="settings-header">
+                                <h2>Billing & Subscription</h2>
+                                <p>Manage your subscription and billing information.</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const settingsItems = [...document.querySelectorAll('.settings-item')];
+        const settingsPanels = [...document.querySelectorAll('.settings-panel')];
+        settingsItems.forEach(item => item.addEventListener('click', event => {
+            event.preventDefault();
+            const panelId = item.getAttribute('href').slice(1);
+            settingsItems.forEach(link => link.classList.toggle('active', link === item));
+            settingsPanels.forEach(panel => { panel.hidden = panel.id !== panelId; });
+        }));
+
+        document.getElementById('settings-search').addEventListener('input', event => {
+            const query = event.target.value.trim().toLowerCase();
+            settingsItems.forEach(item => {
+                item.hidden = query && !item.textContent.toLowerCase().includes(query);
+            });
+        });
+
+        document.querySelectorAll('.color-control input[type="color"]').forEach(colorInput => {
+            colorInput.addEventListener('input', () => {
+                colorInput.parentElement.querySelector('.color-code').value = colorInput.value.toUpperCase();
+            });
+        });
+        const description = document.getElementById('store-description');
+        if (description) description.addEventListener('input', () => {
+            document.querySelector('.description-count').textContent = `${description.value.length}/300`;
+        });
+    </script>
+</body>
+</html>

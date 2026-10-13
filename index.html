@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shoe-com</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="background-slideshow" aria-hidden="true">
+        <div class="background-slide background-slide-one is-active"></div>
+        <div class="background-slide background-slide-two"></div>
+        <div class="background-slide background-slide-three"></div>
+    </div>
+
+    <!-- hero and nav-bar -->
+    <nav class="navbar">
+        <div class="brand-wrap">
+            <div class="brand-bag" role="img" aria-label="Leather bag">
+                <svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true" focusable="false">
+                    <defs>
+                        <linearGradient id="leather" x1="12" y1="18" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#bd8050"/>
+                            <stop offset="1" stop-color="#61391f"/>
+                        </linearGradient>
+                        <linearGradient id="hardware" x1="25" y1="22" x2="39" y2="42" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#ffe6a7"/>
+                            <stop offset="1" stop-color="#c28b3c"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M22 23v-7a10 10 0 0 1 20 0v7" fill="none" stroke="url(#hardware)" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M14 22h36l4 32H10l4-32Z" fill="url(#leather)" stroke="#e5bd78" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M15 25h34l3 26H12l3-26Z" fill="none" stroke="#e7b77a" stroke-opacity=".65" stroke-width="1" stroke-dasharray="1.5 2.5"/>
+                    <path d="M14 30c6 2 12 3 18 3s12-1 18-3l1 12c-6 2-12 3-19 3s-13-1-19-3l1-12Z" fill="#7b482b" fill-opacity=".68"/>
+                    <path d="M14 30c6 2 12 3 18 3s12-1 18-3" fill="none" stroke="#d89e60" stroke-width="1.5"/>
+                    <path d="M32 31v7" stroke="url(#hardware)" stroke-width="2"/>
+                    <circle cx="32" cy="40" r="3" fill="url(#hardware)" stroke="#8b5b29" stroke-width="1"/>
+                    <circle cx="32" cy="40" r=".8" fill="#fff2cc"/>
+                </svg>
+            </div>
+            <div class="logo">
+                <h1>GAUDIUM OPUS</h1>
+                <h2>LEATHER WORK</h2>
+            </div>
+        </div>
+
+        <div class="nav-middle">
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#Shop">Shop</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-tools">
+            <label class="search-box">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input type="search" placeholder="Search" aria-label="Search the store">
+            </label>
+            <a class="icon-btn cart-nav-link" href="http://127.0.0.1:8000/cart/" aria-label="Cart">🛒</a>
+            <button class="icon-btn" type="button" aria-label="Account">👤</button>
+        </div>
+    </nav>
+
+    <section id="home" class="home">
+        <div class="hero-content">
+            <h1 class="hero-title">Quality Leather<br><span>Goods for Every</span>
+                <br><span>Step of Your Journey</span></h1>
+            <p class="hero-text">Premium leather shoes, bags, belts and more.Style, comfort and durability - all in one place.</p>
+            <a href="http://127.0.0.1:8000/shop/" class="btn">Shop Now <span class="btn-arrow" aria-hidden="true">→</span></a>
+        </div>
+    </section>
+
+    <!-- ====shop ==== -->
+    <section class="shop" id="Shop">
+        <div class="shop-categories">
+            <div class="shop-heading">
+                <p class="shop-eyebrow"><span></span> SHOP BY CATEGORY <span></span></p>
+                <h2>Explore Our Collection</h2>
+            </div>
+            <div class="category-container">
+                <a class="category-card" href="http://127.0.0.1:8000/shop/category/leather-shoes/">
+                    <span class="category-art category-art-shoes" role="img" aria-label="Brown leather dress shoes"></span>
+                    <span class="category-name">Leather Shoes</span>
+                    <span class="category-link">Shop Now <span aria-hidden="true">→</span></span>
+                </a>
+                <a class="category-card" href="http://127.0.0.1:8000/shop/category/sandals-slippers/">
+                    <span class="category-art category-art-sandals" role="img" aria-label="Leather sandals"></span>
+                    <span class="category-name">Sandals &amp; Slippers</span>
+                    <span class="category-link">Shop Now <span aria-hidden="true">→</span></span>
+                </a>
+                <a class="category-card" href="http://127.0.0.1:8000/shop/category/loafers/">
+                    <span class="category-art category-art-loafers" role="img" aria-label="Black leather loafers"></span>
+                    <span class="category-name">Loafers</span>
+                    <span class="category-link">Shop Now <span aria-hidden="true">→</span></span>
+                </a>
+                <a class="category-card" href="http://127.0.0.1:8000/shop/category/bags/">
+                    <span class="category-art category-art-bags" role="img" aria-label="Brown leather bag"></span>
+                    <span class="category-name">Bags</span>
+                    <span class="category-link">Shop Now <span aria-hidden="true">→</span></span>
+                </a>
+                <a class="category-card" href="http://127.0.0.1:8000/shop/category/belts/">
+                    <span class="category-art category-art-belts" role="img" aria-label="Leather belt"></span>
+                    <span class="category-name">Belts</span>
+                    <span class="category-link">Shop Now <span aria-hidden="true">→</span></span>
+                </a>
+                <a class="category-card" href="http://127.0.0.1:8000/shop/category/boots/">
+                    <span class="category-art category-art-boots" role="img" aria-label="Black leather boots"></span>
+                    <span class="category-name">Boots</span>
+                    <span class="category-link">Shop Now <span aria-hidden="true">→</span></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="featured-products" id="best-sellers">
+            <div class="featured-heading">
+                <div>
+                    <p class="shop-eyebrow featured-eyebrow"><span></span> FEATURED PRODUCTS <span></span></p>
+                    <h2>Best Sellers</h2>
+                </div>
+                <a class="view-all" href="http://127.0.0.1:8000/shop/">View All <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="shop-container">
+                <article class="shop-item">
+                    <img src="images/shoe.png" alt="Brown leather dress shoes">
+                    <h3>Men's Leather Dress Shoes</h3>
+                    <p>₦45,000</p>
+                    <a href="http://127.0.0.1:8000/product/mens-leather-dress-shoes/" class="btn">Choose Size</a>
+                </article>
+                <article class="shop-item">
+                    <img src="images/images.jpeg" alt="Classic black leather loafers">
+                    <h3>Classic Loafers</h3>
+                    <p>₦38,000</p>
+                    <a href="http://127.0.0.1:8000/product/classic-loafers/" class="btn">Choose Size</a>
+                </article>
+                <article class="shop-item">
+                    <img src="images/images5.jpeg" alt="Leather sandals">
+                    <h3>Outdoor Sandals</h3>
+                    <p>₦22,000</p>
+                    <a href="http://127.0.0.1:8000/product/outdoor-sandals/" class="btn">Choose Size</a>
+                </article>
+                <article class="shop-item">
+                    <img src="images/background.png" alt="Brown leather briefcase">
+                    <h3>Leather Briefcase Bag</h3>
+                    <p>₦55,000</p>
+                    <a href="http://127.0.0.1:8000/product/leather-briefcase-bag/" class="btn">View Product</a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-intro" id="about">
+        <div class="about-shell">
+            <div class="about-copy">
+                <p class="section-kicker"><span></span> ABOUT US</p>
+                <h2>Crafted with Passion,<br>Made for You</h2>
+                <p>Gaudium Opus Leather World is a premium leather goods store dedicated to providing high-quality, stylish and durable products. We believe that great leather never goes out of style.</p>
+                <a href="#story" class="btn about-btn">Our Story <span class="btn-arrow" aria-hidden="true">→</span></a>
+            </div>
+            <!-- <div class="about-visual" aria-hidden="true"></div> -->
+        </div>
+
+
+    <div class="story-panel">
+        <div class="story-outer">
+            <div class="story-image" aria-label="Crafting leather goods"></div>
+
+            <div class="story-copy">
+                <h3>Our Story</h3>
+                <p>Founded with a passion for craftsmanship and quality, Gaudium Opus Leather World brings you timeless leather goods designed for everyday use. From classic shoes to stylish bags and accessories, every product is carefully selected to give you the best in comfort, durability and style.</p>
+            </div>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">✦</div>
+                <div>
+                    <h4>Premium Quality</h4>
+                    <p>Genuine leather products</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">▣</div>
+                <div>
+                    <h4>Fast &amp; Reliable Delivery</h4>
+                    <p>Get your items on time</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">◎</div>
+                <div>
+                    <h4>Secure Payments</h4>
+                    <p>Shop with confidence</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- our story ends here. -->
+    </section>
+
+
+<!-- testimonial -->
+
+    <section class="testimonial-section">
+        <h3>What Our Customers Say</h3>
+
+        <div class="testimonial-grid">
+            <article class="testimonial-card">
+                <div class="avatar avatar-one" aria-hidden="true"></div>
+                <p>“Very good quality and stylish. The shoes fit perfectly and look even better in person.”</p>
+                <div class="reviewer">— Tunde A.</div>
+                <div class="stars" aria-label="Five star review">★★★★★</div>
+            </article>
+
+            <article class="testimonial-card">
+                <div class="avatar avatar-two" aria-hidden="true"></div>
+                <p>“I love my new bag! The leather is top quality and the delivery was super fast.”</p>
+                <div class="reviewer">— Esther M.</div>
+                <div class="stars" aria-label="Five star review">★★★★★</div>
+            </article>
+
+            <article class="testimonial-card">
+                <div class="avatar avatar-three" aria-hidden="true"></div>
+                <p>“Best place to get leather goods. I've bought shoes and a belt, all are excellent.”</p>
+                <div class="reviewer">— Daniel K.</div>
+                <div class="stars" aria-label="Five star review">★★★★★</div>
+            </article>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div class="newsletter-inner">
+            <div class="newsletter-header">
+                <span class="newsletter-badge">✦</span>
+                <h3>Stay Updated</h3>
+            </div>
+            <p>Get the latest offers, new arrivals and exclusive deals.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email address" aria-label="Email address">
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="brand-bag footer-bag" role="img" aria-label="Leather bag logo">
+                    <svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true" focusable="false">
+                        <defs>
+                            <linearGradient id="footerLeather" x1="12" y1="18" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#bd8050"/>
+                                <stop offset="1" stop-color="#61391f"/>
+                            </linearGradient>
+                            <linearGradient id="footerHardware" x1="25" y1="22" x2="39" y2="42" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#ffe6a7"/>
+                                <stop offset="1" stop-color="#c28b3c"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M22 23v-7a10 10 0 0 1 20 0v7" fill="none" stroke="url(#footerHardware)" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M14 22h36l4 32H10l4-32Z" fill="url(#footerLeather)" stroke="#e5bd78" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M15 25h34l3 26H12l3-26Z" fill="none" stroke="#e7b77a" stroke-opacity=".65" stroke-width="1" stroke-dasharray="1.5 2.5"/>
+                        <path d="M14 30c6 2 12 3 18 3s12-1 18-3l1 12c-6 2-12 3-19 3s-13-1-19-3l1-12Z" fill="#7b482b" fill-opacity=".68"/>
+                        <path d="M14 30c6 2 12 3 18 3s12-1 18-3" fill="none" stroke="#d89e60" stroke-width="1.5"/>
+                        <path d="M32 31v7" stroke="url(#footerHardware)" stroke-width="2"/>
+                        <circle cx="32" cy="40" r="3" fill="url(#footerHardware)" stroke="#8b5b29" stroke-width="1"/>
+                    </svg>
+                </div>
+                <div class="logo footer-logo">
+                    <h1>GAUDIUM OPUS</h1>
+                    <h2>LEATHER WORK</h2>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#Shop">Shop</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Categories</h4>
+                <ul>
+                    <li><a href="#">Shoes</a></li>
+                    <li><a href="#">Slippers</a></li>
+                    <li><a href="#">Loafers</a></li>
+                    <li><a href="#">Bags</a></li>
+                    <li><a href="#">Belts</a></li>
+                    <li><a href="#">Boots</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links contact-links">
+                <h4>Connect With Us</h4>
+                <div class="socials">
+                    <span>f</span>
+                    <span>◎</span>
+                    <span>◌</span>
+                    <span>◍</span>
+                </div>
+                <p>9 Old Furo, Lumen Church Building,<br>Chuntaltnur Jntrn, Hophat Road,<br>Abia, Ondo State</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2025 Gaudium Opus Leather World. All rights reserved.</span>
+            <span>Quality  |  Style  |  Durability</span>
+        </div>
+    </footer>
+    <script src="script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Gaudium Opus Leather World</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" media="(max-width: 650px)" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}?v=mobile-bottom-nav-4">
+</head>
+<body class="catalog-body">
+    <nav class="navbar">
+        <div class="brand-wrap">
+            <a href="{% url 'store:home' %}" class="brand-bag" aria-label="Gaudium Opus home">👜</a>
+            <div class="logo"><h1>GAUDIUM OPUS</h1><h2>LEATHER WORK</h2></div>
+        </div>
+        {% include "store/includes/mobile_nav_toggle.html" %}
+        <div class="nav-middle" id="store-mobile-nav">
+            <ul class="nav-links">
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:shop' %}">Shop</a></li>
+                <li><a href="{% url 'store:home' %}#about">About</a></li>
+                <li><a href="{% url 'store:home' %}#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="nav-tools">
+            {% include "store/includes/customer_menu.html" %}
+            <a class="icon-btn cart-nav-link" href="{% url 'store:cart' %}" aria-label="Cart">
+                🛒{% if cart_count %}<span class="cart-count">{{ cart_count }}</span>{% endif %}
+            </a>
+        </div>
+    </nav>
+    {% include "store/includes/mobile_bottom_nav.html" %}
+
+    <main class="checkout-page">
+        <nav class="breadcrumbs cart-breadcrumbs" aria-label="Breadcrumb">
+            <a href="{% url 'store:home' %}">Home</a>
+            <span aria-hidden="true">›</span>
+            <a href="{% url 'store:cart' %}">Shopping Cart</a>
+            <span aria-hidden="true">›</span>
+            <span aria-current="page">Checkout</span>
+        </nav>
+        <div class="cart-heading">
+            <div>
+                <p class="shop-eyebrow"><span></span> DELIVERY DETAILS <span></span></p>
+                <h1>Checkout</h1>
+            </div>
+            <a class="continue-shopping" href="{% url 'store:cart' %}">Back to Cart</a>
+        </div>
+
+        <div class="checkout-layout">
+            <form method="post" class="checkout-form">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <div class="checkout-fields">
+                    {% for field in form %}
+                    <div class="checkout-field{% if field.name == 'address' or field.name == 'delivery_notes' %} checkout-field-wide{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                        <p class="field-error" role="alert">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="payment-method">
+                    <strong>Payment on delivery</strong>
+                    <p>No payment is collected online. We’ll contact you using the details above to confirm delivery.</p>
+                </div>
+                <button class="checkout-button checkout-submit" type="submit">Place Order</button>
+            </form>
+
+            <aside class="cart-summary checkout-summary">
+                <h2>Your Order</h2>
+                {% for item in items %}
+                <div class="checkout-order-item">
+                    <span>{{ item.quantity }} × {{ item.product.name }}{% if item.size %} (Size {{ item.size }}){% endif %}</span>
+                    <strong>₦{{ item.line_total_display }}</strong>
+                </div>
+                {% endfor %}
+                <div class="summary-line"><span>Subtotal</span><strong>₦{{ subtotal_display }}</strong></div>
+                <div class="summary-line"><span>Shipping</span><strong>{% if shipping %}₦{{ shipping_display }}{% else %}Free{% endif %}</strong></div>
+                <div class="summary-line summary-total"><span>Total due on delivery</span><strong>₦{{ total_display }}</strong></div>
+            </aside>
+        </div>
+    </main>
+</body>
+</html>

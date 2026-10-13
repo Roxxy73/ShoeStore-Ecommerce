@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order Details | Gaudium Opus Admin</title>
+<link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}"><link rel="stylesheet" href="{% static 'store/admin_orders.css' %}"><link rel="stylesheet" href="{% static 'store/admin_order_detail.css' %}">
+</head><body class="dashboard-body"><div class="admin-shell">
+<aside class="admin-sidebar">
+    <a class="admin-brand" href="{{ store_url }}"><span class="brand-mark">◆</span><span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span></a>
+    <nav class="side-nav" aria-label="Admin navigation">
+        <a class="side-link" href="{{ dashboard_url }}"><span>▦</span> Dashboard</a><a class="side-link" href="{{ product_list_url }}"><span>◇</span> Products</a><a class="side-link active" href="{{ orders_url }}"><span>▤</span> Orders</a><a class="side-link" href="{{ customers_url }}"><span>♙</span> Customers</a><a class="side-link" href="{{ store_url }}shop/"><span>▧</span> Categories</a><a class="side-link" href="{{ dashboard_url }}#top-products"><span>▣</span> Sales Reports</a><a class="side-link" href="{{ settings_url }}"><span>⚙</span> Settings</a>
+    </nav>
+    <div class="sidebar-user"><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span><form method="post" action="{{ logout_url }}">{% csrf_token %}<button type="submit" aria-label="Log out">↪</button></form></div>
+</aside>
+<main class="dashboard-main"><header class="topbar"><form class="dashboard-search" method="get" action="{{ orders_url }}"><span>⌕</span><input type="search" name="q" placeholder="Search orders and customers..." aria-label="Search orders and customers"><button type="submit">Search</button></form><div class="topbar-user"><span class="notification">♧</span><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Super Admin</small></span></div></header>
+<div class="dashboard-content detail-content"><a class="detail-back" href="{{ orders_url }}">← Back to Orders</a><div class="page-heading"><div><h1>Order Details</h1><p>Review customer information and update this order.</p></div><span class="order-ref">#ORD-{{ order.reference|stringformat:"s"|slice:":8" }}</span></div>
+{% if messages %}<div class="settings-messages" role="status">{% for message in messages %}{{ message }}{% endfor %}</div>{% endif %}
+<div class="detail-grid"><section class="panel detail-main-card"><div class="panel-heading"><h2>Items Ordered</h2><span class="orders-count">{{ items|length }} item{% if items|length != 1 %}s{% endif %}</span></div>
+{% for item in items %}<div class="detail-item"><span class="product-placeholder">◆</span><div><strong>{{ item.product_name }}</strong><small>Size: {{ item.size|default:"—" }} · Quantity: {{ item.quantity }}</small></div><b>₦{{ item.line_total }}</b></div>{% empty %}<p class="empty-state">No item details found.</p>{% endfor %}
+<div class="detail-totals"><div><span>Subtotal</span><b>₦{{ order.subtotal }}</b></div><div><span>Shipping</span><b>₦{{ order.shipping }}</b></div><div class="grand-total"><span>Total</span><b>₦{{ order.total }}</b></div></div></section>
+<aside class="detail-side"><section class="panel detail-side-card"><div class="panel-heading"><h2>Customer</h2></div><strong>{{ order.full_name }}</strong><p>{{ order.email }}<br>{{ order.phone }}</p></section>
+<section class="panel detail-side-card"><div class="panel-heading"><h2>Shipping Address</h2></div><p>{{ order.address }}<br>{{ order.city }}, {{ order.state }}</p>{% if order.delivery_notes %}<small>{{ order.delivery_notes }}</small>{% endif %}</section>
+<section class="panel detail-side-card"><div class="panel-heading"><h2>Order Status</h2></div><form method="post" class="status-update-form">{% csrf_token %}<label for="order-status">Status</label><select name="status" id="order-status">{% for value, label in order.Status.choices %}<option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="btn-primary" type="submit">Save Status</button></form><p class="order-created">Placed {{ order.created_at|date:"M d, Y · g:i A" }}</p></section></aside></div></div>
+</main></div></body></html>

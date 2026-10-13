@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if is_edit %}Edit Product{% else %}Add Product{% endif %} | Gaudium Opus Admin</title>
+    <link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_orders.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_products.css' %}">
+</head>
+<body class="dashboard-body product-admin-page">
+<div class="admin-shell">
+    <aside class="admin-sidebar">
+        <a class="admin-brand" href="{{ store_url }}"><span class="brand-mark">◆</span><span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span></a>
+        <nav class="side-nav" aria-label="Admin navigation">
+            <a class="side-link" href="{{ dashboard_url }}"><span>▦</span> Dashboard</a>
+            <a class="side-link active" href="{{ product_list_url }}"><span>◇</span> Products</a>
+            <a class="side-link" href="{{ orders_url }}"><span>▤</span> Orders</a>
+            <a class="side-link" href="{% url 'admin_reviews' %}"><span>★</span> Reviews</a>
+            <a class="side-link" href="{{ customers_url }}"><span>♙</span> Customers</a>
+            <a class="side-link" href="{{ category_list_url }}"><span>▧</span> Categories</a>
+            <a class="side-link" href="{{ dashboard_url }}#top-products"><span>▣</span> Sales Reports</a>
+            <a class="side-link" href="{{ settings_url }}"><span>⚙</span> Settings</a>
+        </nav>
+        <div class="sidebar-user"><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span><form method="post" action="{{ logout_url }}">{% csrf_token %}<button type="submit" aria-label="Log out">↪</button></form></div>
+    </aside>
+    <main class="dashboard-main">
+        <header class="topbar"><a class="product-back-link" href="{{ product_list_url }}">← Products</a><div class="topbar-user"><span class="notification" aria-hidden="true">♧</span><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span></div></header>
+        <div class="dashboard-content products-content">
+            <div class="page-heading"><div><h1>{% if is_edit %}Edit Product{% else %}Add Product{% endif %}</h1><p>{% if is_edit %}Update the product details and storefront visibility.{% else %}Add a new product to your storefront catalogue.{% endif %}</p></div></div>
+            {% if messages %}<div class="product-messages" role="status">{% for message in messages %}{{ message }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>{% endif %}
+            <section class="panel product-form-panel">
+                {% if product and product.image_src %}<div class="product-current-image"><img src="{{ product.image_src }}" alt="{{ product.alt|default:product.name }}"><span>Current product image</span></div>{% endif %}
+                <form method="post" enctype="multipart/form-data" class="product-form">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}<div class="product-form-errors">{{ form.non_field_errors }}</div>{% endif %}
+                    <div class="product-form-grid">
+                    {% for field in form %}
+                        {% if field.name == "is_active" %}
+                            <div class="product-form-field product-form-wide product-active-field"><label for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}<small>Active products are visible on the storefront.</small></span></label>{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+                        {% else %}
+                            <div class="product-form-field{% if field.name == 'description' or field.name == 'image' or field.name == 'image_path' or field.name == 'alt' or field.name == 'size_options' %} product-form-wide{% endif %}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-mark">*</span>{% endif %}</label>
+                                {{ field }}
+                                {% if field.help_text %}<small class="field-help">{{ field.help_text }}</small>{% endif %}
+                                {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                    <div class="product-form-actions">
+                        {% if is_edit %}<button class="product-delete-button" type="submit" form="delete-product-form" onclick="return confirm('Delete {{ product.name|escapejs }} permanently? This product will be removed from the website.')">Delete Product</button>{% endif %}
+                        <a class="product-cancel-button" href="{{ product_list_url }}">Cancel</a>
+                        <button class="product-primary-button" type="submit">{% if is_edit %}Save Changes{% else %}Add Product{% endif %}</button>
+                    </div>
+                </form>
+                {% if is_edit %}<form id="delete-product-form" method="post" action="{% url 'admin_product_delete' product.pk %}">{% csrf_token %}</form>{% endif %}
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

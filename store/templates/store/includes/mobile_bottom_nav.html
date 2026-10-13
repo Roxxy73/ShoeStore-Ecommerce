@@ -1,0 +1,45 @@
+<nav class="mobile-bottom-nav" aria-label="Store navigation">
+    <a href="{% url 'store:home' %}"><i class="mobile-bottom-icon fa-solid fa-house-tsunami" aria-hidden="true"></i><span>Home</span></a>
+    <a href="{% url 'store:shop' %}"><i class="mobile-bottom-icon fa-solid fa-layer-group" aria-hidden="true"></i><span>Categories</span></a>
+    {% if user.is_authenticated %}
+    <button class="mobile-bottom-you" type="button" data-open-customer-menu><i class="mobile-bottom-icon fa-solid fa-user" aria-hidden="true"></i><span>You</span></button>
+    {% else %}
+    <details class="customer-menu mobile-bottom-you-menu">
+        <summary class="mobile-bottom-you"><i class="mobile-bottom-icon fa-solid fa-user" aria-hidden="true"></i><span>You</span></summary>
+        <button class="customer-menu-backdrop" type="button" aria-label="Close account panel" tabindex="-1"></button>
+        <aside class="customer-menu-panel" aria-label="Your account">
+            <div class="customer-drawer-heading"><div><p class="customer-drawer-eyebrow">YOUR ACCOUNT</p><h2>Welcome</h2></div><button class="customer-drawer-close" type="button" aria-label="Close account panel">×</button></div>
+            <p>Sign in or create an account to manage your profile and orders.</p>
+            <a class="customer-drawer-account-link" href="{% url 'store:login' %}">Log in <span>→</span></a>
+            <a class="customer-drawer-account-link" href="{% url 'store:register' %}">Create an account <span>→</span></a>
+        </aside>
+    </details>
+    <script>
+    (() => {
+        const menu = document.querySelector(".mobile-bottom-you-menu");
+        if (!menu) return;
+        const panel = menu.querySelector(".customer-menu-panel");
+        const backdrop = menu.querySelector(".customer-menu-backdrop");
+        const closeButton = menu.querySelector(".customer-drawer-close");
+        document.body.append(backdrop, panel);
+        panel.setAttribute("role", "dialog");
+        panel.setAttribute("aria-modal", "true");
+        const close = () => { menu.open = false; document.body.classList.remove("customer-drawer-open"); };
+        menu.addEventListener("toggle", () => document.body.classList.toggle("customer-drawer-open", menu.open));
+        backdrop.addEventListener("click", close);
+        closeButton.addEventListener("click", close);
+        document.addEventListener("keydown", (event) => { if (event.key === "Escape" && menu.open) close(); });
+    })();
+    </script>
+    {% endif %}
+    <a class="mobile-bottom-brand" href="{% url 'store:home' %}" aria-label="Gaudium Opus home"><span aria-hidden="true">◆</span><small>GAUDIUM<br>OPUS</small></a>
+    <a href="{% url 'store:cart' %}" aria-label="Cart"><span class="mobile-bottom-icon" aria-hidden="true">🛒</span><span>Cart{% if cart_count %} ({{ cart_count }}){% endif %}</span></a>
+</nav>
+{% if user.is_authenticated %}
+<script>
+document.querySelectorAll("[data-open-customer-menu]").forEach((button) => button.addEventListener("click", () => {
+    const summary = document.querySelector(".nav-tools .customer-menu > summary");
+    if (summary) summary.click();
+}));
+</script>
+{% endif %}

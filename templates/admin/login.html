@@ -1,0 +1,108 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Admin Login | Gaudium Opus{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'store/admin_login.css' %}">
+{% endblock %}
+
+{% block bodyclass %}login admin-login-page{% endblock %}
+{% block header %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block content %}
+<main class="login-layout">
+    <section class="login-intro" aria-label="Gaudium Opus">
+        <a class="login-brand" href="{% url 'store:home' %}" aria-label="Gaudium Opus home">
+            <span class="login-brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M17 19v-5a7 7 0 0 1 14 0v5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M11 19h26l3 21H8l3-21Z" fill="currentColor"/><path d="m20 27 4 4 4-4" fill="none" stroke="#e8ad4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span>
+        </a>
+        <div class="intro-copy">
+            <p class="intro-eyebrow">GAUDIUM OPUS · LEATHER WORLD</p>
+            <h1>Welcome Back</h1>
+            <p>Sign in to your admin account and<br class="desktop-break"> manage your store with ease.</p>
+        </div>
+        <ul class="login-highlights">
+            <li><span aria-hidden="true">▣</span> Manage Products</li>
+            <li><span aria-hidden="true">♧</span> Track Orders</li>
+            <li><span aria-hidden="true">▥</span> View Reports</li>
+            <li><span aria-hidden="true">⚙</span> Update Settings</li>
+        </ul>
+    </section>
+
+    <section class="login-form-region">
+        <div class="login-card">
+            <a class="card-brand" href="{% url 'store:home' %}" aria-label="Gaudium Opus home">
+                <span class="login-brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M17 19v-5a7 7 0 0 1 14 0v5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M11 19h26l3 21H8l3-21Z" fill="currentColor"/><path d="m20 27 4 4 4-4" fill="none" stroke="#e8ad4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <strong>GAUDIUM OPUS</strong>
+                <small>LEATHER WORLD</small>
+            </a>
+            <h2>Admin Login</h2>
+            <p class="login-subtitle">Enter your credentials to continue</p>
+
+            {% if form.errors and not form.non_field_errors %}
+            <p class="login-error">{% translate "Please correct the errors below." %}</p>
+            {% endif %}
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+            <p class="login-error">{{ error }}</p>
+            {% endfor %}
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <p class="login-error">{% blocktranslate %}You are authenticated as {{ username }}, but are not authorized to access this page. Would you like to login to a different account?{% endblocktranslate %}</p>
+            {% endif %}
+
+            <form class="login-form" action="{{ app_path }}" method="post" id="login-form">
+                {% csrf_token %}
+                {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                <div class="form-row">
+                    <label for="{{ form.username.id_for_label }}">{% translate "Email Address" %}</label>
+                    <div class="input-wrap">
+                        <span class="field-icon" aria-hidden="true">✉</span>
+                        {{ form.username }}
+                    </div>
+                    {{ form.username.errors }}
+                </div>
+                <div class="form-row">
+                    <label for="{{ form.password.id_for_label }}">{% translate "Password" %}</label>
+                    <div class="input-wrap">
+                        <span class="field-icon" aria-hidden="true">♙</span>
+                        {{ form.password }}
+                        <button class="password-toggle" type="button" aria-label="Show password" aria-pressed="false">◉</button>
+                    </div>
+                    {{ form.password.errors }}
+                </div>
+                <div class="form-options">
+                    <label class="remember-option"><input type="checkbox" name="remember_me"> <span>{% translate "Remember me" %}</span></label>
+                    <a href="{% url 'admin_password_reset' %}">{% translate "Forgot password?" %}</a>
+                </div>
+                <button class="login-submit" type="submit">{% translate "Login" %}<span aria-hidden="true">→</span></button>
+            </form>
+
+            <div class="login-divider"><span>{% translate "or" %}</span></div>
+            <a class="google-login" href="{% url 'admin:login' %}" aria-label="Continue with Google (not configured)">
+                <span class="google-mark" aria-hidden="true">G</span>
+                {% translate "Continue with Google" %}
+            </a>
+            <footer class="login-footer">© 2025 Gaudium Opus. All rights reserved.</footer>
+        </div>
+    </section>
+</main>
+<script>
+    const passwordField = document.getElementById("id_password");
+    const passwordToggle = document.querySelector(".password-toggle");
+    document.getElementById("id_username").setAttribute("placeholder", "admin@gaudiumopus.com");
+    passwordField.setAttribute("placeholder", "Enter your password");
+    passwordToggle.addEventListener("click", () => {
+        const isVisible = passwordField.type === "text";
+        passwordField.type = isVisible ? "password" : "text";
+        passwordToggle.setAttribute("aria-pressed", String(!isVisible));
+        passwordToggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+    });
+</script>
+{% endblock %}

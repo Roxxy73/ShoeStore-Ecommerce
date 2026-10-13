@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Gaudium Opus Leather World</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" media="(max-width: 650px)" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}?v=mobile-bottom-nav-4">
+</head>
+<body class="catalog-body">
+    <nav class="navbar">
+        <div class="brand-wrap">
+            <a href="{% url 'store:home' %}" class="brand-bag" aria-label="Gaudium Opus home">👜</a>
+            <div class="logo"><h1>GAUDIUM OPUS</h1><h2>LEATHER WORK</h2></div>
+        </div>
+        {% include "store/includes/mobile_nav_toggle.html" %}
+        <div class="nav-middle" id="store-mobile-nav">
+            <ul class="nav-links">
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:shop' %}">Shop</a></li>
+                <li><a href="{% url 'store:home' %}#about">About</a></li>
+                <li><a href="{% url 'store:home' %}#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="nav-tools">
+            {% include "store/includes/customer_menu.html" %}
+            <a class="icon-btn cart-nav-link" href="{% url 'store:cart' %}" aria-label="Cart">
+                🛒{% if cart_count %}<span class="cart-count">{{ cart_count }}</span>{% endif %}
+            </a>
+        </div>
+    </nav>
+    {% include "store/includes/mobile_bottom_nav.html" %}
+
+    <main class="cart-page">
+        <nav class="breadcrumbs cart-breadcrumbs" aria-label="Breadcrumb">
+            <a href="{% url 'store:home' %}">Home</a>
+            <span aria-hidden="true">›</span>
+            <span aria-current="page">Shopping Cart</span>
+        </nav>
+        <div class="cart-heading">
+            <div>
+                <p class="shop-eyebrow"><span></span> YOUR SELECTION <span></span></p>
+                <h1>Shopping Cart</h1>
+            </div>
+            <a class="continue-shopping" href="{% url 'store:shop' %}">Continue Shopping <span aria-hidden="true">→</span></a>
+        </div>
+
+        {% if items %}
+        <div class="cart-layout">
+            <section class="cart-items" aria-label="Items in your cart">
+                {% for item in items %}
+                <article class="cart-item">
+                    <a class="cart-item-image" href="{% url 'store:product_detail' item.product.slug %}">
+                        {% if item.product.image_src %}
+                        <img src="{{ item.product.image_src }}" alt="{{ item.product.alt }}">
+                        {% else %}
+                        <span class="{{ item.product.image_class }}" role="img" aria-label="{{ item.product.alt }}"></span>
+                        {% endif %}
+                    </a>
+                    <div class="cart-item-details">
+                        <a class="cart-item-name" href="{% url 'store:product_detail' item.product.slug %}">{{ item.product.name }}</a>
+                        {% if item.size %}<p class="cart-item-meta">Size: {{ item.size }}</p>{% endif %}
+                        <p class="cart-item-unit-price">₦{{ item.product.price_display }} each</p>
+                        <div class="cart-item-actions">
+                            <form method="post" action="{% url 'store:update_cart' item.product.slug %}" class="cart-quantity-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="size" value="{{ item.size }}">
+                                <label for="quantity-{{ forloop.counter }}">Qty</label>
+                                <input id="quantity-{{ forloop.counter }}" type="number" name="quantity" min="0" max="99" value="{{ item.quantity }}">
+                                <button type="submit" class="cart-update-button">Update</button>
+                            </form>
+                            <form method="post" action="{% url 'store:remove_from_cart' item.product.slug %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="size" value="{{ item.size }}">
+                                <button type="submit" class="cart-remove-button">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                    <p class="cart-item-total">₦{{ item.line_total_display }}</p>
+                </article>
+                {% endfor %}
+            </section>
+
+            <aside class="cart-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-line"><span>Subtotal</span><strong>₦{{ subtotal_display }}</strong></div>
+                <div class="summary-line">
+                    <span>Shipping</span>
+                    <strong>{% if shipping %}₦{{ shipping_display }}{% else %}Free{% endif %}</strong>
+                </div>
+                {% if subtotal and subtotal < 100000 %}
+                <p class="shipping-note">Spend ₦{{ free_shipping_remaining_display }} more to qualify for free shipping.</p>
+                {% endif %}
+                <div class="summary-line summary-total">
+                    <span>Total</span>
+                    <strong>₦{{ total_display }}</strong>
+                </div>
+                <a class="checkout-button" href="{% url 'store:checkout' %}">Proceed to Checkout</a>
+                <p class="checkout-note">Pay on delivery. We’ll contact you to confirm your order.</p>
+                <div class="secure-note">Payment on delivery</div>
+            </aside>
+        </div>
+        {% else %}
+        <section class="empty-cart">
+            <span class="empty-cart-icon" aria-hidden="true">🛍</span>
+            <h2>Your cart is waiting for something special</h2>
+            <p>Explore our collection and add a timeless leather piece to your cart.</p>
+            <a href="{% url 'store:shop' %}" class="purchase-add-button">Explore the Collection</a>
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>

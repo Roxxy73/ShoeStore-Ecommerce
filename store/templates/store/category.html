@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if display_category %}{{ display_category }}{% else %}Our Products{% endif %} | Gaudium Opus Leather World</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" media="(max-width: 650px)" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'store/styles.css' %}?v=mobile-bottom-nav-4">
+</head>
+<body class="catalog-body">
+    <div class="background-slideshow" aria-hidden="true">
+        <div class="background-slide background-slide-one is-active"></div>
+        <div class="background-slide background-slide-two"></div>
+        <div class="background-slide background-slide-three"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="brand-wrap">
+            <a href="{% url 'store:home' %}" class="brand-bag" aria-label="Gaudium Opus home">
+                <svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true" focusable="false">
+                    <defs>
+                        <linearGradient id="catalogLeather" x1="12" y1="18" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#bd8050"/>
+                            <stop offset="1" stop-color="#61391f"/>
+                        </linearGradient>
+                        <linearGradient id="catalogHardware" x1="25" y1="22" x2="39" y2="42" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#ffe6a7"/>
+                            <stop offset="1" stop-color="#c28b3c"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M22 23v-7a10 10 0 0 1 20 0v7" fill="none" stroke="url(#catalogHardware)" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M14 22h36l4 32H10l4-32Z" fill="url(#catalogLeather)" stroke="#e5bd78" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M15 25h34l3 26H12l3-26Z" fill="none" stroke="#e7b77a" stroke-opacity=".65" stroke-width="1" stroke-dasharray="1.5 2.5"/>
+                    <path d="M14 30c6 2 12 3 18 3s12-1 18-3l1 12c-6 2-12 3-19 3s-13-1-19-3l1-12Z" fill="#7b482b" fill-opacity=".68"/>
+                    <path d="M14 30c6 2 12 3 18 3s12-1 18-3" fill="none" stroke="#d89e60" stroke-width="1.5"/>
+                    <path d="M32 31v7" stroke="url(#catalogHardware)" stroke-width="2"/>
+                    <circle cx="32" cy="40" r="3" fill="url(#catalogHardware)" stroke="#8b5b29" stroke-width="1"/>
+                    <circle cx="32" cy="40" r=".8" fill="#fff2cc"/>
+                </svg>
+            </a>
+            <div class="logo">
+                <h1>GAUDIUM OPUS</h1>
+                <h2>LEATHER WORK</h2>
+            </div>
+        </div>
+        {% include "store/includes/mobile_nav_toggle.html" %}
+        <div class="nav-middle" id="store-mobile-nav">
+            <ul class="nav-links">
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:shop' %}">Shop</a></li>
+                <li><a href="{% url 'store:home' %}#about">About</a></li>
+                <li><a href="{% url 'store:home' %}#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="nav-tools">
+            <label class="search-box">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input type="search" placeholder="Search" aria-label="Search products">
+            </label>
+            <a class="icon-btn cart-nav-link" href="{% url 'store:cart' %}" aria-label="Cart">
+                🛒{% if cart_count %}<span class="cart-count">{{ cart_count }}</span>{% endif %}
+            </a>
+            {% include "store/includes/customer_menu.html" %}
+        </div>
+    </nav>
+    {% include "store/includes/mobile_bottom_nav.html" %}
+
+    <header class="catalog-hero">
+        <div class="catalog-hero-content">
+            <h1>Our Products</h1>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="{% url 'store:home' %}">Home</a>
+                <span aria-hidden="true">›</span>
+                <a href="{% url 'store:shop' %}">Shop</a>
+                {% if display_category %}
+                <span aria-hidden="true">›</span>
+                <span aria-current="page">{{ display_category }}</span>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="catalog-page">
+        <div class="catalog-layout">
+            <aside class="filter-sidebar">
+                <div class="filter-title-row">
+                    <h2>Filter By</h2>
+                    <span aria-hidden="true">☷</span>
+                </div>
+
+                <form method="get" action="{% url 'store:shop' %}" class="filter-form">
+                    <fieldset class="filter-group">
+                        <legend>Category</legend>
+                        {% for category in categories %}
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="{{ category.slug }}"
+                                {% if category.slug in selected_categories %}checked{% endif %}>
+                            <span>{{ category.name }}</span>
+                        </label>
+                        {% endfor %}
+                    </fieldset>
+
+                    <fieldset class="filter-group">
+                        <legend>Price Range</legend>
+                        {% for price_range in price_ranges %}
+                        <label class="filter-option">
+                            <input type="checkbox" name="price" value="{{ price_range.value }}"
+                                {% if price_range.value in selected_prices %}checked{% endif %}>
+                            <span>{{ price_range.label }}</span>
+                        </label>
+                        {% endfor %}
+                    </fieldset>
+
+                    <fieldset class="filter-group">
+                        <legend>Size</legend>
+                        {% for size in sizes %}
+                        <label class="filter-option">
+                            <input type="checkbox" name="size" value="{{ size }}"
+                                {% if size in selected_sizes %}checked{% endif %}>
+                            <span>{{ size }}</span>
+                        </label>
+                        {% endfor %}
+                    </fieldset>
+
+                    <label class="sort-label" for="filter-sort">Sort by</label>
+                    <select id="filter-sort" name="sort">
+                        {% for option in sort_options %}
+                        <option value="{{ option.value }}" {% if option.value == sort %}selected{% endif %}>
+                            {{ option.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button class="filter-submit" type="submit">Apply Filters</button>
+                    <a class="clear-filters" href="{% url 'store:shop' %}">Clear All</a>
+                </form>
+            </aside>
+
+            <section class="catalog-results" aria-labelledby="catalog-title">
+                <div class="catalog-toolbar">
+                    <div>
+                        <h2 id="catalog-title">
+                            {% if display_category %}{{ display_category }}{% else %}All Products{% endif %}
+                        </h2>
+                        <p>{{ product_count }} product{{ product_count|pluralize }} found</p>
+                    </div>
+                    <form method="get" action="{% url 'store:shop' %}" class="sort-form">
+                        {% for category in selected_categories %}
+                        <input type="hidden" name="category" value="{{ category }}">
+                        {% endfor %}
+                        {% for price in selected_prices %}
+                        <input type="hidden" name="price" value="{{ price }}">
+                        {% endfor %}
+                        {% for size in selected_sizes %}
+                        <input type="hidden" name="size" value="{{ size }}">
+                        {% endfor %}
+                        <label for="sort-products">Sort by</label>
+                        <select id="sort-products" name="sort" onchange="this.form.submit()">
+                            {% for option in sort_options %}
+                            <option value="{{ option.value }}" {% if option.value == sort %}selected{% endif %}>
+                                {{ option.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+
+                <div class="catalog-grid">
+                    {% for product in products %}
+                    <article class="catalog-product">
+                        <a class="catalog-product-link" href="{% url 'store:product_detail' product.slug %}" aria-label="View {{ product.name }}">
+                        {% if product.image_src %}
+                        <img class="catalog-product-image" src="{{ product.image_src }}" alt="{{ product.alt }}">
+                        {% else %}
+                        <div class="catalog-product-image {{ product.image_class }}" role="img" aria-label="{{ product.alt }}"></div>
+                        {% endif %}
+                        <h3>{{ product.name }}</h3>
+                        </a>
+                        <p class="catalog-price">₦{{ product.price_display }}</p>
+                        <div class="product-rating" aria-label="Rated 5 out of 5 stars">
+                            <span aria-hidden="true">★★★★★</span>
+                            <small>({{ product.reviews }})</small>
+                        </div>
+                        <form method="post" action="{% url 'store:add_to_cart' product.slug %}">
+                            {% csrf_token %}
+                            {% if product.sizes %}
+                            <input type="hidden" name="size" value="{{ product.sizes.0 }}">
+                            {% endif %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button class="catalog-add-button" type="submit">Add to Cart</button>
+                        </form>
+                    </article>
+                    {% empty %}
+                    <p class="no-products">No products match these filters. Try changing or clearing your filters.</p>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="{% static 'store/script.js' %}" defer></script>
+</body>
+</html>

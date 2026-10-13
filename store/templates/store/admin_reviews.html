@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer Reviews | Gaudium Opus Admin</title>
+    <link rel="stylesheet" href="{% static 'store/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_orders.css' %}">
+    <link rel="stylesheet" href="{% static 'store/admin_reviews.css' %}">
+</head>
+<body class="dashboard-body">
+<div class="admin-shell">
+    <aside class="admin-sidebar">
+        <a class="admin-brand" href="{{ store_url }}"><span class="brand-mark">◆</span><span><strong>GAUDIUM OPUS</strong><small>LEATHER WORLD</small></span></a>
+        <nav class="side-nav" aria-label="Admin navigation">
+            <a class="side-link" href="{{ dashboard_url }}"><span>▦</span> Dashboard</a>
+            <a class="side-link" href="{{ product_list_url }}"><span>◇</span> Products</a>
+            <a class="side-link" href="{{ orders_url }}"><span>▤</span> Orders</a>
+            <a class="side-link active" href="{% url 'admin_reviews' %}"><span>★</span> Reviews</a>
+            <a class="side-link" href="{{ customers_url }}"><span>♙</span> Customers</a>
+            <a class="side-link" href="{{ category_list_url }}"><span>▧</span> Categories</a>
+            <a class="side-link" href="{{ dashboard_url }}#top-products"><span>▣</span> Sales Reports</a>
+            <a class="side-link" href="{{ settings_url }}"><span>⚙</span> Settings</a>
+        </nav>
+        <div class="sidebar-user"><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span><form method="post" action="{{ logout_url }}">{% csrf_token %}<button type="submit" aria-label="Log out">↪</button></form></div>
+    </aside>
+    <main class="dashboard-main">
+        <header class="topbar"><form class="dashboard-search" method="get" action="{% url 'admin_reviews' %}"><input type="hidden" name="status" value="{{ status }}"><span aria-hidden="true">⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search reviews, customers, products..." aria-label="Search reviews"><button type="submit">Search</button></form><div class="topbar-user"><span class="notification" aria-hidden="true">♧</span><span class="avatar">{{ request.user.get_username|first|upper }}</span><span><strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong><small>Store Admin</small></span></div></header>
+        <div class="dashboard-content reviews-content">
+            <div class="page-heading"><div><h1>Customer Reviews</h1><p>Review customer feedback before it appears on your storefront.</p></div></div>
+            {% if messages %}<div class="review-admin-flash" role="status">{% for message in messages %}{{ message }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>{% endif %}
+            <div class="review-admin-metrics"><article class="review-admin-metric"><span>Pending review</span><strong>{{ pending_count }}</strong></article><article class="review-admin-metric"><span>Published reviews</span><strong>{{ approved_count }}</strong></article></div>
+            <nav class="review-filter-tabs" aria-label="Filter reviews"><a class="{% if status == 'pending' %}active{% endif %}" href="{% url 'admin_reviews' %}?status=pending">Pending <span>{{ pending_count }}</span></a><a class="{% if status == 'approved' %}active{% endif %}" href="{% url 'admin_reviews' %}?status=approved">Published <span>{{ approved_count }}</span></a><a class="{% if status == 'all' %}active{% endif %}" href="{% url 'admin_reviews' %}?status=all">All reviews</a></nav>
+            <section class="panel admin-review-panel">
+                <div class="panel-heading"><h2>{% if status == 'pending' %}Awaiting approval{% elif status == 'approved' %}Published reviews{% else %}All customer reviews{% endif %}</h2><span class="orders-count">{{ reviews|length }} review{% if reviews|length != 1 %}s{% endif %}</span></div>
+                <div class="admin-review-list">
+                    {% for review in reviews %}
+                    <article class="admin-review-card">
+                        <div class="admin-review-top"><div><strong>{{ review.customer_name }}</strong><small>{{ review.customer_email }} · {{ review.created_at|date:"M d, Y · g:i A" }} · <a href="{% url 'store:product_detail' review.product.slug %}#customer-reviews">{{ review.product.name }}</a></small></div><span class="admin-review-stars" aria-label="{{ review.rating }} out of 5 stars">{% for star in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}<span>★</span>{% endif %}{% endfor %}</span></div>
+                        <p>{{ review.comment|linebreaksbr }}</p>
+                        <div class="admin-review-actions">
+                            {% if review.is_approved %}<span class="review-published-label">Published on website</span><form method="post" action="{% url 'admin_review_action' review.pk 'reject' %}">{% csrf_token %}<button class="review-secondary-action" type="submit">Return to pending</button></form>
+                            {% else %}<span class="review-pending-label">Pending approval</span><form method="post" action="{% url 'admin_review_action' review.pk 'approve' %}">{% csrf_token %}<button class="review-approve-action" type="submit">Approve review</button></form>{% endif %}
+                            <form method="post" action="{% url 'admin_review_action' review.pk 'delete' %}" onsubmit="return confirm('Delete this customer review permanently?')">{% csrf_token %}<button class="review-delete-action" type="submit">Delete</button></form>
+                        </div>
+                    </article>
+                    {% empty %}<div class="empty-state">No reviews in this view yet.</div>{% endfor %}
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

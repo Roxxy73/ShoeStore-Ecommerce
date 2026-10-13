@@ -1,0 +1,28 @@
+<button class="mobile-nav-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="store-mobile-nav">
+    <span></span><span></span><span></span>
+</button>
+<script>
+const initMobileNav = () => document.querySelectorAll(".mobile-nav-toggle").forEach((button) => {
+        const navbar = button.closest(".navbar");
+        const menu = document.getElementById(button.getAttribute("aria-controls"));
+        const closeMenu = () => {
+            navbar.classList.remove("mobile-menu-open");
+            button.setAttribute("aria-expanded", "false");
+            button.setAttribute("aria-label", "Open navigation menu");
+        };
+        button.addEventListener("click", () => {
+            const isOpen = navbar.classList.toggle("mobile-menu-open");
+            button.setAttribute("aria-expanded", String(isOpen));
+            button.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+        });
+        menu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+        navbar.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeMenu();
+                button.focus();
+            }
+        });
+    });
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initMobileNav, { once: true });
+else initMobileNav();
+</script>

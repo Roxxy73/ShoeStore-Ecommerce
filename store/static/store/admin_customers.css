@@ -1,0 +1,7 @@
+.customer-accounts-table { min-width: 940px; }
+.customer-count-caption { display: block; margin-top: 4px; color: #999188; font-size: 8px; }
+.customer-accounts-table .customer-cell { min-width: 155px; }
+.customer-accounts-table .customer-cell .avatar { width: 28px; height: 28px; font-size: 9px; object-fit: cover; }
+.customer-accounts-table .customer-cell strong { color: #eee7dd; font-size: 9px; font-weight: 500; }
+.customer-accounts-table .customer-cell small { margin-top: 3px; color: #999188; font-size: 8px; }
+.customer-privacy-note { margin: 8px 3px 4px; color: #8f8981; font-size: 8px; }
