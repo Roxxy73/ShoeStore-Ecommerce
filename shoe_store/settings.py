@@ -9,6 +9,16 @@ SECRET_KEY = os.environ.get(
 )
 DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
+for host_variable in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
+    vercel_host = os.environ.get(host_variable, "").strip()
+    if vercel_host:
+        ALLOWED_HOSTS.append(vercel_host)
+
+ALLOWED_HOSTS.extend(
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if host.strip()
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",

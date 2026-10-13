@@ -19,6 +19,15 @@ places a payment-on-delivery order. Orders are saved in the database and can be
 managed at `http://127.0.0.1:8000/admin/` after creating an admin user with
 `python manage.py createsuperuser`. No online payment is collected.
 
+### Vercel host configuration
+
+The app automatically allows Vercel's `VERCEL_URL` and
+`VERCEL_PROJECT_PRODUCTION_URL` hostnames. If you use a custom domain, add it to
+the Vercel project's `DJANGO_ALLOWED_HOSTS` environment variable. For multiple
+domains, separate the hostnames with commas and omit `https://` and any URL path,
+for example `shop.example.com,www.example.com`. Redeploy after changing the
+environment variable.
+
 To add storefront products, sign in as an admin and open
 `http://127.0.0.1:8000/admin/store/product/add/`. Add the product details, upload
 a JPG, PNG, or WebP image (or enter an existing static image path), set its sizes
