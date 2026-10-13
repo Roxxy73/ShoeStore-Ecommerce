@@ -28,6 +28,17 @@ domains, separate the hostnames with commas and omit `https://` and any URL path
 for example `shop.example.com,www.example.com`. Redeploy after changing the
 environment variable.
 
+### Vercel database setup
+
+Vercel needs a persistent PostgreSQL database; the local SQLite file is only
+used for development. Add a PostgreSQL integration such as Neon or Supabase
+from the Vercel Marketplace and connect it to this project. Ensure it provides
+`DATABASE_URL` in Production (or add the provider's connection string under
+that name), then redeploy. Vercel runs `python manage.py migrate --noinput`
+during the build when the database variable is available. Keep the connection
+string secret. The initial migrations create the starter product catalog; create
+an admin user against the new database if you need to manage products or orders.
+
 To add storefront products, sign in as an admin and open
 `http://127.0.0.1:8000/admin/store/product/add/`. Add the product details, upload
 a JPG, PNG, or WebP image (or enter an existing static image path), set its sizes
